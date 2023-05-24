@@ -1,0 +1,521 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="HospitalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Dept">
+          <Key>
+            <PropertyRef Name="Dept_No" />
+          </Key>
+          <Property Name="Dept_No" Type="int" Nullable="false" />
+          <Property Name="DNombre" Type="varchar" MaxLength="50" />
+          <Property Name="Loc" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Doctor">
+          <Key>
+            <PropertyRef Name="Doctor_No" />
+          </Key>
+          <Property Name="Doctor_No" Type="int" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="int" Nullable="false" />
+          <Property Name="Apellido" Type="varchar" MaxLength="50" />
+          <Property Name="Especialidad" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Emp">
+          <Key>
+            <PropertyRef Name="Emp_No" />
+          </Key>
+          <Property Name="Emp_No" Type="int" Nullable="false" />
+          <Property Name="Apellido" Type="varchar" MaxLength="50" />
+          <Property Name="Oficio" Type="varchar" MaxLength="50" />
+          <Property Name="Dir" Type="int" />
+          <Property Name="Fecha_Alt" Type="smalldatetime" />
+          <Property Name="Salario" Type="numeric" Precision="9" Scale="2" />
+          <Property Name="Comision" Type="numeric" Precision="9" Scale="2" />
+          <Property Name="Dept_No" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Hospital.dbo.Enfermo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Enfermo">
+          <Key>
+            <PropertyRef Name="Inscripcion" />
+          </Key>
+          <Property Name="Inscripcion" Type="int" Nullable="false" />
+          <Property Name="Apellido" Type="varchar" MaxLength="50" />
+          <Property Name="Direccion" Type="varchar" MaxLength="50" />
+          <Property Name="Fecha_Nac" Type="varchar" MaxLength="50" />
+          <Property Name="S" Type="varchar" MaxLength="2" />
+          <Property Name="NSS" Type="int" />
+        </EntityType>
+        <EntityType Name="Hospital">
+          <Key>
+            <PropertyRef Name="Hospital_Cod" />
+          </Key>
+          <Property Name="Hospital_Cod" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Direccion" Type="varchar" MaxLength="50" />
+          <Property Name="Telefono" Type="varchar" MaxLength="50" />
+          <Property Name="Num_Cama" Type="int" />
+        </EntityType>
+        <EntityType Name="Plantilla">
+          <Key>
+            <PropertyRef Name="Empleado_No" />
+          </Key>
+          <Property Name="Empleado_No" Type="int" Nullable="false" />
+          <Property Name="Sala_Cod" Type="int" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="int" Nullable="false" />
+          <Property Name="Apellido" Type="varchar" MaxLength="50" />
+          <Property Name="Funcion" Type="varchar" MaxLength="50" />
+          <Property Name="T" Type="varchar" MaxLength="15" />
+          <Property Name="Salario" Type="numeric" Precision="9" Scale="2" />
+        </EntityType>
+        <EntityType Name="Sala">
+          <Key>
+            <PropertyRef Name="Sala_Cod" />
+            <PropertyRef Name="Hospital_Cod" />
+          </Key>
+          <Property Name="Sala_Cod" Type="int" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="int" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Num_Cama" Type="int" />
+        </EntityType>
+        <Association Name="FK_Doctor_Hospital">
+          <End Role="Hospital" Type="Self.Hospital" Multiplicity="1" />
+          <End Role="Doctor" Type="Self.Doctor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospital">
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Doctor">
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Emp_Dept">
+          <End Role="Dept" Type="Self.Dept" Multiplicity="0..1" />
+          <End Role="Emp" Type="Self.Emp" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dept">
+              <PropertyRef Name="Dept_No" />
+            </Principal>
+            <Dependent Role="Emp">
+              <PropertyRef Name="Dept_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Plantilla_Sala01">
+          <End Role="Sala" Type="Self.Sala" Multiplicity="1" />
+          <End Role="Plantilla" Type="Self.Plantilla" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sala">
+              <PropertyRef Name="Sala_Cod" />
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Plantilla">
+              <PropertyRef Name="Sala_Cod" />
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sala_Hospital">
+          <End Role="Hospital" Type="Self.Hospital" Multiplicity="1" />
+          <End Role="Sala" Type="Self.Sala" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospital">
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Sala">
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="sp_actualizar_hospital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="intCod_Hospital" Type="int" Mode="In" />
+          <Parameter Name="strNombre" Type="varchar" Mode="In" />
+          <Parameter Name="strDireccion" Type="varchar(max)" Mode="In" />
+          <Parameter Name="strTelefono" Type="varchar" Mode="In" />
+          <Parameter Name="intNcama" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_eliminar_hospital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="intCod_Hospital" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_insertar_hospital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="strNombre" Type="varchar" Mode="In" />
+          <Parameter Name="strDireccion" Type="varchar(max)" Mode="In" />
+          <Parameter Name="strTelefono" Type="varchar" Mode="In" />
+          <Parameter Name="intNcama" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_listar_hospital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Filtro" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="HospitalModelStoreContainer">
+          <EntitySet Name="Dept" EntityType="Self.Dept" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Doctor" EntityType="Self.Doctor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Emp" EntityType="Self.Emp" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Hospital" EntityType="Self.Hospital" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Plantilla" EntityType="Self.Plantilla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sala" EntityType="Self.Sala" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Enfermo" EntityType="Self.Enfermo" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Enfermo].[Inscripcion] AS [Inscripcion], 
+    [Enfermo].[Apellido] AS [Apellido], 
+    [Enfermo].[Direccion] AS [Direccion], 
+    [Enfermo].[Fecha_Nac] AS [Fecha_Nac], 
+    [Enfermo].[S] AS [S], 
+    [Enfermo].[NSS] AS [NSS]
+    FROM [dbo].[Enfermo] AS [Enfermo]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Doctor_Hospital" Association="Self.FK_Doctor_Hospital">
+            <End Role="Hospital" EntitySet="Hospital" />
+            <End Role="Doctor" EntitySet="Doctor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Emp_Dept" Association="Self.FK_Emp_Dept">
+            <End Role="Dept" EntitySet="Dept" />
+            <End Role="Emp" EntitySet="Emp" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Plantilla_Sala01" Association="Self.FK_Plantilla_Sala01">
+            <End Role="Sala" EntitySet="Sala" />
+            <End Role="Plantilla" EntitySet="Plantilla" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sala_Hospital" Association="Self.FK_Sala_Hospital">
+            <End Role="Hospital" EntitySet="Hospital" />
+            <End Role="Sala" EntitySet="Sala" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="HospitalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Dept">
+          <Key>
+            <PropertyRef Name="Dept_No" />
+          </Key>
+          <Property Name="Dept_No" Type="Int32" Nullable="false" />
+          <Property Name="DNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Loc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Emps" Relationship="Self.FK_Emp_Dept" FromRole="Dept" ToRole="Emp" />
+        </EntityType>
+        <EntityType Name="Doctor">
+          <Key>
+            <PropertyRef Name="Doctor_No" />
+          </Key>
+          <Property Name="Doctor_No" Type="Int32" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Apellido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Especialidad" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Hospital" Relationship="Self.FK_Doctor_Hospital" FromRole="Doctor" ToRole="Hospital" />
+        </EntityType>
+        <EntityType Name="Emp">
+          <Key>
+            <PropertyRef Name="Emp_No" />
+          </Key>
+          <Property Name="Emp_No" Type="Int32" Nullable="false" />
+          <Property Name="Apellido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Oficio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Dir" Type="Int32" />
+          <Property Name="Fecha_Alt" Type="DateTime" Precision="0" />
+          <Property Name="Salario" Type="Decimal" Precision="9" Scale="2" />
+          <Property Name="Comision" Type="Decimal" Precision="9" Scale="2" />
+          <Property Name="Dept_No" Type="Int32" />
+          <NavigationProperty Name="Dept" Relationship="Self.FK_Emp_Dept" FromRole="Emp" ToRole="Dept" />
+        </EntityType>
+        <EntityType Name="Hospital">
+          <Key>
+            <PropertyRef Name="Hospital_Cod" />
+          </Key>
+          <Property Name="Hospital_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Num_Cama" Type="Int32" />
+          <NavigationProperty Name="Doctors" Relationship="Self.FK_Doctor_Hospital" FromRole="Hospital" ToRole="Doctor" />
+          <NavigationProperty Name="Salas" Relationship="Self.FK_Sala_Hospital" FromRole="Hospital" ToRole="Sala" />
+        </EntityType>
+        <EntityType Name="Plantilla">
+          <Key>
+            <PropertyRef Name="Empleado_No" />
+          </Key>
+          <Property Name="Empleado_No" Type="Int32" Nullable="false" />
+          <Property Name="Sala_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Apellido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Funcion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="T" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Salario" Type="Decimal" Precision="9" Scale="2" />
+          <NavigationProperty Name="Sala" Relationship="Self.FK_Plantilla_Sala01" FromRole="Plantilla" ToRole="Sala" />
+        </EntityType>
+        <EntityType Name="Sala">
+          <Key>
+            <PropertyRef Name="Sala_Cod" />
+            <PropertyRef Name="Hospital_Cod" />
+          </Key>
+          <Property Name="Sala_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Hospital_Cod" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Num_Cama" Type="Int32" />
+          <NavigationProperty Name="Hospital" Relationship="Self.FK_Sala_Hospital" FromRole="Sala" ToRole="Hospital" />
+          <NavigationProperty Name="Plantillas" Relationship="Self.FK_Plantilla_Sala01" FromRole="Sala" ToRole="Plantilla" />
+        </EntityType>
+        <EntityType Name="Enfermo">
+          <Key>
+            <PropertyRef Name="Inscripcion" />
+          </Key>
+          <Property Name="Inscripcion" Type="Int32" Nullable="false" />
+          <Property Name="Apellido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha_Nac" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="S" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="NSS" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Emp_Dept">
+          <End Role="Dept" Type="Self.Dept" Multiplicity="0..1" />
+          <End Role="Emp" Type="Self.Emp" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dept">
+              <PropertyRef Name="Dept_No" />
+            </Principal>
+            <Dependent Role="Emp">
+              <PropertyRef Name="Dept_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Doctor_Hospital">
+          <End Role="Hospital" Type="Self.Hospital" Multiplicity="1" />
+          <End Role="Doctor" Type="Self.Doctor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospital">
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Doctor">
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sala_Hospital">
+          <End Role="Hospital" Type="Self.Hospital" Multiplicity="1" />
+          <End Role="Sala" Type="Self.Sala" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospital">
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Sala">
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Plantilla_Sala01">
+          <End Role="Sala" Type="Self.Sala" Multiplicity="1" />
+          <End Role="Plantilla" Type="Self.Plantilla" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sala">
+              <PropertyRef Name="Sala_Cod" />
+              <PropertyRef Name="Hospital_Cod" />
+            </Principal>
+            <Dependent Role="Plantilla">
+              <PropertyRef Name="Sala_Cod" />
+              <PropertyRef Name="Hospital_Cod" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HospitalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Depts" EntityType="Self.Dept" />
+          <EntitySet Name="Doctors" EntityType="Self.Doctor" />
+          <EntitySet Name="Emps" EntityType="Self.Emp" />
+          <EntitySet Name="Hospitals" EntityType="Self.Hospital" />
+          <EntitySet Name="Plantillas" EntityType="Self.Plantilla" />
+          <EntitySet Name="Salas" EntityType="Self.Sala" />
+          <EntitySet Name="Enfermoes" EntityType="Self.Enfermo" />
+          <AssociationSet Name="FK_Emp_Dept" Association="Self.FK_Emp_Dept">
+            <End Role="Dept" EntitySet="Depts" />
+            <End Role="Emp" EntitySet="Emps" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Doctor_Hospital" Association="Self.FK_Doctor_Hospital">
+            <End Role="Hospital" EntitySet="Hospitals" />
+            <End Role="Doctor" EntitySet="Doctors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sala_Hospital" Association="Self.FK_Sala_Hospital">
+            <End Role="Hospital" EntitySet="Hospitals" />
+            <End Role="Sala" EntitySet="Salas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Plantilla_Sala01" Association="Self.FK_Plantilla_Sala01">
+            <End Role="Sala" EntitySet="Salas" />
+            <End Role="Plantilla" EntitySet="Plantillas" />
+          </AssociationSet>
+          <FunctionImport Name="sp_actualizar_hospital" ReturnType="Collection(HospitalModel.sp_actualizar_hospital_Result)">
+            <Parameter Name="intCod_Hospital" Mode="In" Type="Int32" />
+            <Parameter Name="strNombre" Mode="In" Type="String" />
+            <Parameter Name="strDireccion" Mode="In" Type="String" />
+            <Parameter Name="strTelefono" Mode="In" Type="String" />
+            <Parameter Name="intNcama" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_eliminar_hospital" ReturnType="Collection(HospitalModel.sp_eliminar_hospital_Result)">
+          <Parameter Name="intCod_Hospital" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_insertar_hospital" ReturnType="Collection(HospitalModel.sp_insertar_hospital_Result)">
+            <Parameter Name="strNombre" Mode="In" Type="String" />
+            <Parameter Name="strDireccion" Mode="In" Type="String" />
+            <Parameter Name="strTelefono" Mode="In" Type="String" />
+            <Parameter Name="intNcama" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_listar_hospital" ReturnType="Collection(HospitalModel.sp_listar_hospital_Result)">
+          <Parameter Name="Filtro" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="sp_listar_hospital_Result">
+          <Property Type="Int32" Name="Hospital_Cod" Nullable="false" />
+          <Property Type="String" Name="Nombre" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Direccion" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Telefono" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="Num_Cama" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_insertar_hospital_Result">
+          <Property Type="Boolean" Name="RESPUESTA" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_actualizar_hospital_Result">
+          <Property Type="Boolean" Name="Respuesta" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_eliminar_hospital_Result">
+          <Property Type="Boolean" Name="Respuesta" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="HospitalModelStoreContainer" CdmEntityContainer="HospitalEntities">
+          <EntitySetMapping Name="Depts">
+            <EntityTypeMapping TypeName="HospitalModel.Dept">
+              <MappingFragment StoreEntitySet="Dept">
+                <ScalarProperty Name="Dept_No" ColumnName="Dept_No" />
+                <ScalarProperty Name="DNombre" ColumnName="DNombre" />
+                <ScalarProperty Name="Loc" ColumnName="Loc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Doctors">
+            <EntityTypeMapping TypeName="HospitalModel.Doctor">
+              <MappingFragment StoreEntitySet="Doctor">
+                <ScalarProperty Name="Doctor_No" ColumnName="Doctor_No" />
+                <ScalarProperty Name="Hospital_Cod" ColumnName="Hospital_Cod" />
+                <ScalarProperty Name="Apellido" ColumnName="Apellido" />
+                <ScalarProperty Name="Especialidad" ColumnName="Especialidad" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Emps">
+            <EntityTypeMapping TypeName="HospitalModel.Emp">
+              <MappingFragment StoreEntitySet="Emp">
+                <ScalarProperty Name="Emp_No" ColumnName="Emp_No" />
+                <ScalarProperty Name="Apellido" ColumnName="Apellido" />
+                <ScalarProperty Name="Oficio" ColumnName="Oficio" />
+                <ScalarProperty Name="Dir" ColumnName="Dir" />
+                <ScalarProperty Name="Fecha_Alt" ColumnName="Fecha_Alt" />
+                <ScalarProperty Name="Salario" ColumnName="Salario" />
+                <ScalarProperty Name="Comision" ColumnName="Comision" />
+                <ScalarProperty Name="Dept_No" ColumnName="Dept_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Hospitals">
+            <EntityTypeMapping TypeName="HospitalModel.Hospital">
+              <MappingFragment StoreEntitySet="Hospital">
+                <ScalarProperty Name="Hospital_Cod" ColumnName="Hospital_Cod" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Num_Cama" ColumnName="Num_Cama" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Plantillas">
+            <EntityTypeMapping TypeName="HospitalModel.Plantilla">
+              <MappingFragment StoreEntitySet="Plantilla">
+                <ScalarProperty Name="Empleado_No" ColumnName="Empleado_No" />
+                <ScalarProperty Name="Sala_Cod" ColumnName="Sala_Cod" />
+                <ScalarProperty Name="Hospital_Cod" ColumnName="Hospital_Cod" />
+                <ScalarProperty Name="Apellido" ColumnName="Apellido" />
+                <ScalarProperty Name="Funcion" ColumnName="Funcion" />
+                <ScalarProperty Name="T" ColumnName="T" />
+                <ScalarProperty Name="Salario" ColumnName="Salario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Salas">
+            <EntityTypeMapping TypeName="HospitalModel.Sala">
+              <MappingFragment StoreEntitySet="Sala">
+                <ScalarProperty Name="Sala_Cod" ColumnName="Sala_Cod" />
+                <ScalarProperty Name="Hospital_Cod" ColumnName="Hospital_Cod" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Num_Cama" ColumnName="Num_Cama" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Enfermoes">
+            <EntityTypeMapping TypeName="HospitalModel.Enfermo">
+              <MappingFragment StoreEntitySet="Enfermo">
+                <ScalarProperty Name="Inscripcion" ColumnName="Inscripcion" />
+                <ScalarProperty Name="Apellido" ColumnName="Apellido" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Fecha_Nac" ColumnName="Fecha_Nac" />
+                <ScalarProperty Name="S" ColumnName="S" />
+                <ScalarProperty Name="NSS" ColumnName="NSS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_actualizar_hospital" FunctionName="HospitalModel.Store.sp_actualizar_hospital" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalModel.sp_actualizar_hospital_Result">
+                <ScalarProperty Name="Respuesta" ColumnName="Respuesta" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_eliminar_hospital" FunctionName="HospitalModel.Store.sp_eliminar_hospital" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalModel.sp_eliminar_hospital_Result">
+                <ScalarProperty Name="Respuesta" ColumnName="Respuesta" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_insertar_hospital" FunctionName="HospitalModel.Store.sp_insertar_hospital" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalModel.sp_insertar_hospital_Result">
+                <ScalarProperty Name="RESPUESTA" ColumnName="RESPUESTA" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_listar_hospital" FunctionName="HospitalModel.Store.sp_listar_hospital">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HospitalModel.sp_listar_hospital_Result">
+                <ScalarProperty Name="Hospital_Cod" ColumnName="Hospital_Cod" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Num_Cama" ColumnName="Num_Cama" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
